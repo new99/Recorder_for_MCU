@@ -9,7 +9,7 @@ Qt >= 5.7
 Программа с последовательного порта считывает структурированную строку в виде:
 `"f1/r/nf2/r/n … fn/r/n/r/n"`,где `f1`, `f2` и `fn` — данные передаваемые с микроконтроллера, `/r/n`  - разделение данных, а в конце `/r/n/r/n` — окончание строки.
 
-![alt text]()
+![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/Settings.png "Settings")
 
 # Пример 
 В качестве примера представлена работа Recorder_for_MCU с Arduino.
@@ -36,7 +36,7 @@ void loop() {
 }
 ```
 
-![alt text]()
+![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/to_time.png "to_time")
 
 ## Пример работы с использование to_values для Graph 
 ```c
@@ -66,4 +66,4 @@ void loop()
 }
 ```
 
-![alt text]()
+![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/to_values.png "to_values")
