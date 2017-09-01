@@ -16,7 +16,8 @@ Qt >= 5.7
 `Serial.println(f1)` - стандартная функция для вывода в Arduino впредставляться будет в виде `"f1/r/n"`
 `Serial.println()` - пустая строка сигнализирует об оканчании считывания данных
 
-### Пример работы с использование to_time для Graph 
+### Пример работы с использование to_time для параметра Graph 
+Исходный код для Arduino
 ```c
 double x = 0;
 void setup() {
@@ -38,7 +39,8 @@ void loop() {
 
 ![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/to_time.png "to_time")
 
-### Пример работы с использование to_values для Graph 
+### Пример работы с использование to_values для параметра Graph 
+Исходный код для Arduino
 ```c
 double x = 0;
 int a = 1;
