@@ -76,7 +76,6 @@ void Chart::handleTimeout()
     m_x = this->is_x();
     m_y = this->is_y(Number);
 
-
     if(m_series->count() == 0)
     {
         m_y_max = m_y * 1.01;
@@ -105,6 +104,7 @@ void Chart::boot(bool t)
     if(t)
     {
         this->stop();
+        m_axis->setVisible(true);
     }
     else
     {
@@ -125,9 +125,9 @@ void Chart::start()
 {
     m_timer.setInterval(is_time_interval() * 1000);
     m_series = new QLineSeries(this);
-    QPen green(Qt::red);
-    green.setWidth(2);
-    m_series->setPen(green);
+    QPen red(Qt::red);
+    red.setWidth(2);
+    m_series->setPen(red);
     this->addSeries(m_series);
     this->createDefaultAxes();
     this->setAxisX(m_axis, m_series);
