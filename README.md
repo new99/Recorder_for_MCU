@@ -46,7 +46,7 @@ void loop() {
 }
 ```
 
-![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/to_time.png "to_time")
+![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/Examples/Example_1/to_time.png "to_time")
 
 ### Пример работы с использование to_values для параметра Graph 
 Исходный код для Arduino
@@ -73,4 +73,4 @@ void loop()
 }
 ```
 
-![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/to_values.png "to_values")
+![alt text](https://github.com/new99/Recorder_for_MCU/blob/master/Examples/Example_2/to_values.png "to_values")
