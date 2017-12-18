@@ -69,6 +69,7 @@ void SerialPort::Change_in_time()
 {
     QByteArray sig = this->readAll();
     this->str_values += sig;
+
 //    this->str_values = "12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n";
     if(this->str_values.isEmpty())
     {
@@ -85,36 +86,96 @@ void SerialPort::Change_in_time()
     this->str_values = list1.back();
 
     m_x = ((qreal)my_time.elapsed()) / 1000;
-    QVector<qreal> sum_y(Number_graph);
-    for(int j = 0; j < Number_graph; j++)
-        sum_y[j] = 0;
-    int n = 0;
 
-
-    for(int i = 0; i < list1.size(); i++)
+    switch (take_value) {
+    case 1:
     {
-
-        QStringList list2 = list1.at(i).split("\r\n");
-
-        if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
-            continue;
-
-        for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
+        qreal x_begin = 0;
+        if(x.size() > 0)
+            x_begin = x.last();
+        qreal h = (m_x - x_begin) / (list1.size() + 1);
+        for(int i = 0; i < list1.size()-1; i++)
         {
-            Number[j] = list2.at(j);
-            if(!Number[j].isEmpty())
-                sum_y[j] += Number.at(j).toDouble();
+            QStringList list2 = list1.at(i).split("\r\n");
+
+            if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
+                break;
+
+            m_mutex.lock();
+            x.push_back(x_begin + (i+1) * h);
+            for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
+            {
+                Number[j] = list2.at(j);
+                if(!Number.at(j).isEmpty())
+                    m_y[j] = Number.at(j).toDouble();
+                y.append(m_y.at(j));
+            }
+            m_mutex.unlock();
         }
-        n++;
+
     }
-    m_mutex.lock();
-    x.push_back(m_x);
-    for(int i = 0; i < Number_graph; i++)
+        break;
+    case 2:
     {
-        m_y[i] = sum_y[i] / n;
-        y.append(m_y[i]);
+        if(list1.size() > 2)
+        {
+            QStringList list2 = list1.at(list1.size() / 2).split("\r\n");
+
+            if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
+                break;
+
+            for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
+            {
+                Number[j] = list2.at(j);
+                if(!Number.at(j).isEmpty())
+                    m_y[j] = Number.at(j).toDouble();
+            }
+        }
+        m_mutex.lock();
+        x.push_back(m_x);
+        for(int i = 0; i < Number_graph; i++)
+            y.append(m_y[i]);
+
+        m_mutex.unlock();
     }
-    m_mutex.unlock();
+        break;
+    case 3:
+    {
+        QVector<qreal> sum_y(Number_graph);
+        for(int j = 0; j < Number_graph; j++)
+            sum_y[j] = 0;
+        int n = 0;
+
+
+        for(int i = 0; i < list1.size()-1; i++)
+        {
+
+            QStringList list2 = list1.at(i).split("\r\n");
+
+            if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
+                continue;
+
+            for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
+            {
+                Number[j] = list2.at(j);
+                if(!Number[j].isEmpty())
+                    sum_y[j] += Number.at(j).toDouble();
+            }
+            n++;
+        }
+        m_mutex.lock();
+        x.push_back(m_x);
+        for(int i = 0; i < Number_graph; i++)
+        {
+            m_y[i] = sum_y[i] / n;
+            y.append(m_y[i]);
+        }
+        m_mutex.unlock();
+    }
+        break;
+    }
+
+
 }
 
 void SerialPort::Change_in_values()
@@ -136,40 +197,115 @@ void SerialPort::Change_in_values()
     QStringList list1 = this->str_values.split("\r\n\r\n");
     this->str_values = list1.back();
 
-    qreal sum_x = 0;
-    qreal sum_y = 0;
-    int n = 0;
-    for(int i = 0; i < list1.size(); i++)
+    switch (take_value) {
+    case 1:
     {
-        QStringList list2 = list1.at(i).split("\r\n");
-        if(Number_graph  < list2.size())
+        for(int i = 0; i < list1.size() - 1; i++)
         {
-            if((!list2.at(0).isEmpty()) && (!list2.at(1).isEmpty()))
+            QStringList list2 = list1.at(i).split("\r\n");
+            if(Number_graph  < list2.size())
             {
-                sum_x += list2.at(0).toDouble();
-                sum_y += list2.at(1).toDouble();
-                n++;
+                if((!list2.at(0).isEmpty()) && (!list2.at(1).isEmpty()))
+                {
+                    m_x = list2.at(0).toDouble();
+                    m_y[0] = list2.at(1).toDouble();
+                }
+
+                m_mutex.lock();
+                if(x.size() == 0)
+                {
+                    x.push_back(m_x);
+                    y.append(m_y[0]);
+                }
+                else
+                    if((x.back() != m_x) || (y.back() != m_y[0]))
+                    {
+                        x.push_back(m_x);
+                        y.append(m_y[0]);
+                    }
+
+                m_mutex.unlock();
             }
         }
     }
-    m_mutex.lock();
-    if(n > 0)
+        break;
+    case 2:
     {
-        m_x = sum_x / n;
-        m_y[0] = sum_y / n;
+        if(list1.size() > 2)
+        {
+            QStringList list2 = list1.at(list1.size() / 2).split("\r\n");
+
+            if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
+                break;
+
+            if(Number_graph  < list2.size())
+            {
+                if((!list2.at(0).isEmpty()) && (!list2.at(1).isEmpty()))
+                {
+                    m_x = list2.at(0).toDouble();
+                    m_y[0] = list2.at(1).toDouble();
+                }
+
+            }
+        }
+        m_mutex.lock();
         if(x.size() == 0)
         {
             x.push_back(m_x);
             y.append(m_y[0]);
         }
         else
-        if((x.back() != m_x) || (y.back() != m_y[0]))
-        {
-            x.push_back(m_x);
-            y.append(m_y[0]);
-        }
+            if((x.back() != m_x) || (y.back() != m_y[0]))
+            {
+                x.push_back(m_x);
+                y.append(m_y[0]);
+            }
+        m_mutex.unlock();
+
+
     }
-    m_mutex.unlock();
+        break;
+    case 3:
+    {
+        qreal sum_x = 0;
+        qreal sum_y = 0;
+        int n = 0;
+        for(int i = 0; i < list1.size() - 1; i++)
+        {
+            QStringList list2 = list1.at(i).split("\r\n");
+            if(Number_graph  < list2.size())
+            {
+                if((!list2.at(0).isEmpty()) && (!list2.at(1).isEmpty()))
+                {
+                    sum_x += list2.at(0).toDouble();
+                    sum_y += list2.at(1).toDouble();
+                    n++;
+                }
+            }
+        }
+
+        m_mutex.lock();
+        if(n > 0)
+        {
+            m_x = sum_x / n;
+            m_y[0] = sum_y / n;
+            if(x.size() == 0)
+            {
+                x.push_back(m_x);
+                y.append(m_y[0]);
+            }
+            else
+                if((x.back() != m_x) || (y.back() != m_y[0]))
+                {
+                    x.push_back(m_x);
+                    y.append(m_y[0]);
+                }
+        }
+        m_mutex.unlock();
+        break;
+    }
+    }
+
 }
 
 void SerialPort::clear_numbers()
@@ -188,7 +324,7 @@ void SerialPort::save(QString path)
     if (file->open(QIODevice::WriteOnly))
     {
         out << "t ";
-        for(int i = 0; i < Number_graph - 1; i++)
+        for(int i = 0; i < Number_graph; i++)
         {
             out << "f_" << i << "_(t) ";
         }
@@ -224,8 +360,11 @@ void SerialPort::start()
     x.clear();
     y.clear();
     Number_graph = is_number_graph();
+    take_value = is_take();
     Number.resize(Number_graph);
     m_y.resize(Number_graph);
+    for(int i = 0; i < Number_graph; i++)
+        n.append(0);
 
     m_timer.setInterval(is_time_interval() * 1000);
 
@@ -268,7 +407,7 @@ qreal SerialPort::is_x()
 {
     qreal t = 0;
     m_mutex.lock();
-    if(x.size() != 0)
+    if(x.size() > 0)
         t = x.at(x.size()-1);
     m_mutex.unlock();
     return t;
@@ -286,3 +425,24 @@ qreal SerialPort::is_y(int i)
     return t;
 }
 
+QVector<qreal> SerialPort::is_XY(int Number_element)
+{
+    QVector<qreal> XY;
+    if(Number_element >= Number_graph)
+        return XY;
+    m_mutex.lock();
+    if(x.size() > 0)
+    {
+        for(int i = n.at(Number_element); i < x.size(); i++)
+        {
+                XY.append(x.at(i));
+        }
+        for(int i = n.at(Number_element); i < x.size(); i++)
+        {
+                XY.append(y.at(i * Number_graph + Number_element));
+        }
+        n[Number_element] = x.size();
+    }
+    m_mutex.unlock();
+    return XY;
+}

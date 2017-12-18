@@ -73,27 +73,53 @@ void Chart::handleTimeout()
     if(!set_values())
         return;
 
-    m_x = this->is_x();
-    m_y = this->is_y(Number);
+    QVector<qreal> XY = this->is_XY(Number);
+    if(XY.size() < 2)
+        return;
 
-    if(m_series->count() == 0)
+    for(int i = 0; i < XY.size() / 2; i++)
     {
-        m_y_max = m_y * 1.01;
-        this->axisY()->setMax(m_y_max);
-        m_y_min = m_y * 0.99;
-        this->axisY()->setMin(m_y_min);
+        m_x = XY.at(i);
+        m_y = XY.at(XY.size() / 2 + i);
+
+        if(m_series->count() == 0)
+        {
+            m_y_max = m_y * 1.01;
+            this->axisY()->setMax(m_y_max);
+            m_y_min = m_y * 0.99;
+            this->axisY()->setMin(m_y_min);
+            m_x_max = m_x * 1.01;
+            m_x_min = m_x * 0.99;
+        }
+        if(m_y > 0)
+        {
+            if(m_y > m_y_max)
+            {
+                m_y_max = m_y * 1.01;
+                this->axisY()->setMax(m_y_max);
+            }
+            if(m_y < m_y_min)
+            {
+                m_y_min = m_y * 0.99;
+                this->axisY()->setMin(m_y_min);
+            }
+        }
+        else
+        {
+            if(m_y > m_y_max)
+            {
+                m_y_max = m_y * 0.99;
+                this->axisY()->setMax(m_y_max);
+            }
+            if(m_y < m_y_min)
+            {
+                m_y_min = m_y * 1.01;
+                this->axisY()->setMin(m_y_min);
+            }
+        }
+
+        m_series->append(m_x, m_y);
     }
-    if(m_y > m_y_max)
-    {
-        m_y_max = m_y * 1.01;
-        this->axisY()->setMax(m_y_max);
-    }
-    if(m_y < m_y_min)
-    {
-        m_y_min = m_y * 0.99;
-        this->axisY()->setMin(m_y_min);
-    }
-    m_series->append(m_x, m_y);
 
     this->clear_graph();
     this->change_range();
@@ -118,8 +144,6 @@ void Chart::boot(bool t)
         }
     }
 }
-
-
 
 void Chart::start()
 {
@@ -177,6 +201,10 @@ void Chart::set_clear_numbers()
 {
     m_x = 0;
     m_y = 0;
+    m_x_min = 0;
+    m_x_max  = 0;
+    m_y_min = 0;
+    m_y_max = 0;
     this->axisX()->setRange(m_x_min, m_x_max);
     this->axisY()->setRange(m_y_min, m_y_max);
     m_series->clear();
@@ -193,6 +221,7 @@ void Chart::change_range()
 {
     if(is_range)
     {
+        m_x_max = m_x;
         qreal eps = m_x_max - m_x_min;
         if(eps > range)
             m_x_min += eps - range;
@@ -208,7 +237,6 @@ void Chart::change_range()
     }
 
     this->axisX()->setRange(m_x_min, m_x_max);
-
 }
 
 void Chart::stop()

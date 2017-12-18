@@ -91,6 +91,7 @@ private:
 signals:
     qreal is_x();
     qreal is_y(int i);
+    QVector<qreal> is_XY(int i);
     int is_time_interval();
     bool set_values();
     void clear_numbers();

@@ -68,6 +68,7 @@ void Info_Dialog::button(bool t)
     ui->time_interval_lineEdit->setEnabled(t);
     ui->to_values_radioButton->setEnabled(t);
     ui->to_time_radioButton_2->setEnabled(t);
+    ui->frame->setEnabled(t);
     if(!ui->start_pushButton->isEnabled())
     {
         ui->auto_checkBox->setEnabled(t);
@@ -102,6 +103,11 @@ void Info_Dialog::boot()
     {
         this->hide();
     }
+}
+
+int Info_Dialog::is_take()
+{
+    return ui->all_radioButton->isChecked() + 2 * ui->last_radioButton->isChecked() + 3 * ui->mean_radioButton->isChecked();
 }
 
 

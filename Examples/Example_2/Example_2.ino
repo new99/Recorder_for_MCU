@@ -16,7 +16,7 @@ void loop() {
     a = -1;
   }
   x += a * 0.001;
-  Serial.println(x); 
-  Serial.println(f1); 
+  Serial.println(x, 5); 
+  Serial.println(f1, 5); 
   Serial.println(); 
 }

@@ -54,6 +54,7 @@ public slots:
     int is_number_graph();
     int is_time_interval();
     void boot();
+    int is_take();
 
 private:
 

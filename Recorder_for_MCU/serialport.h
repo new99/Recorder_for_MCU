@@ -64,12 +64,15 @@ private:
     QTime my_time;
     bool values;
     QString str_values;
+    QVector<int> n;
+    int take_value;
 
 public slots:
     void start();
     void stop();
     qreal is_x();
     qreal is_y(int i);
+    QVector<qreal> is_XY(int Number_element);
     void setPort(QString port);
     QString isTime();
     bool is_values();
@@ -87,6 +90,7 @@ signals:
     int is_number_graph();
     bool is_values_graph();
     int is_time_interval();
+    int is_take();
     void stop_thread();
     void info_connection(QString str);
 

@@ -74,6 +74,7 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(port, &SerialPort::is_number_graph, window, &Info_Dialog::is_number_graph);
     QObject::connect(port, &SerialPort::is_values_graph, window->ui->to_values_radioButton, &QRadioButton::isChecked);
     QObject::connect(port, &SerialPort::info_connection, window->ui->info_label, &QLabel::setText);
+    QObject::connect(port, &SerialPort::is_take, window, &Info_Dialog::is_take);
 
     QObject::connect(window->ui->pushButton, &QPushButton::released, window, &Info_Dialog::reject);
     QObject::connect(window->ui->pushButton, &QPushButton::released, this, &GraphWindows::close);
@@ -132,6 +133,7 @@ void GraphWindows::new_Chart(QHBoxLayout *mainLayout, int i)
 
     QObject::connect(chart, &Chart::is_x, port, &SerialPort::is_x);
     QObject::connect(chart, &Chart::is_y, port, &SerialPort::is_y);
+    QObject::connect(chart, &Chart::is_XY, port, &SerialPort::is_XY);
     QObject::connect(chart, &Chart::is_time_interval, window, &Info_Dialog::is_time_interval);
     QObject::connect(port, &SerialPort::boot, chart, &Chart::boot);
     QObject::connect(chart, &Chart::set_values, port, &SerialPort::is_values);
