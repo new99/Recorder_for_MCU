@@ -1,11 +1,10 @@
-![GitHub license](https://img.shields.io/github/license/new99/Recorder_for_MCU.svg?style=flat-square)](https://github.com/new99/Recorder_for_MCU/blob/master/LICENSE)
 
 # Recorder_for_MCU
 Recorder for MCU – программа для мониторинга данных с последовательного порта в реальном времени. Программа написана на C++ с использованием библиотеки Qt.
 
 
 ## Зависимость
-![Qt >= 5.7](https://img.shields.io/badge/QT-%3E%3D5.7-green.svg)](https://www.qt.io/)
+Qt >= 5.7
 
 ## Как использовать
 Программа с последовательного порта считывает структурированную строку в виде:
