@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>275</width>
+    <width>245</width>
     <height>343</height>
    </rect>
   </property>
@@ -148,6 +148,13 @@
        </item>
        <item>
         <widget class="QComboBox" name="comboBox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Up</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -300,22 +307,6 @@
   <connection>
    <sender>to_values_radioButton</sender>
    <signal>toggled(bool)</signal>
-   <receiver>number_spinBox</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>174</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>135</x>
-     <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>to_values_radioButton</sender>
-   <signal>toggled(bool)</signal>
    <receiver>auto_checkBox</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -324,8 +315,8 @@
      <y>55</y>
     </hint>
     <hint type="destinationlabel">
-     <x>95</x>
-     <y>103</y>
+     <x>141</x>
+     <y>124</y>
     </hint>
    </hints>
   </connection>
@@ -346,6 +337,86 @@
    </hints>
   </connection>
   <connection>
+   <sender>to_values_radioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>auto_checkBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>141</x>
+     <y>124</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>to_time_radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>range_checkBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>154</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>to_time_radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>range_spinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>227</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>to_time_radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>range_checkBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>95</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>to_values_radioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>number_spinBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>134</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>to_time_radioButton_2</sender>
    <signal>toggled(bool)</signal>
    <receiver>number_spinBox</receiver>
@@ -358,70 +429,6 @@
     <hint type="destinationlabel">
      <x>135</x>
      <y>134</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>to_values_radioButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>auto_checkBox</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>174</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>95</x>
-     <y>103</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>to_time_radioButton_2</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>range_checkBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>81</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>74</x>
-     <y>74</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>to_time_radioButton_2</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>range_spinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>88</x>
-     <y>41</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>141</x>
-     <y>72</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>to_time_radioButton_2</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>range_checkBox</receiver>
-   <slot>setChecked(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>79</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>95</x>
-     <y>75</y>
     </hint>
    </hints>
   </connection>

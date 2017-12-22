@@ -67,7 +67,6 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(port, &SerialPort::boot, this, &GraphWindows::boot);
     QObject::connect(port, &SerialPort::is_time_interval, window, &Info_Dialog::is_time_interval);
     QObject::connect(port, &SerialPort::is_number_graph, window, &Info_Dialog::is_number_graph);
-    QObject::connect(window->ui->comboBox, static_cast<void(QComboBox::*)(const QString &)>(&QComboBox::activated), port, &SerialPort::setPort);
     QObject::connect(window->ui->start_pushButton, &QPushButton::released, port, &SerialPort::start);
     QObject::connect(window->ui->stop_pushButton, &QPushButton::released, port, &SerialPort::stop);
     QObject::connect(window->item, &File_Item_Model_Dialog::FilePath, port, &SerialPort::save);

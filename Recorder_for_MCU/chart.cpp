@@ -74,7 +74,7 @@ void Chart::handleTimeout()
         return;
 
     QVector<qreal> XY = this->is_XY(Number);
-    if(XY.size() < 2)
+    if((XY.size() < 2) && (XY.size() % 2 != 0))
         return;
 
     for(int i = 0; i < XY.size() / 2; i++)

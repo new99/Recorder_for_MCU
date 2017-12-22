@@ -40,9 +40,8 @@ Info_Dialog::Info_Dialog(QWidget *parent) :
     this->setWindowTitle("settings");
     item = new File_Item_Model_Dialog(this);
     ui->setupUi(this);
-    const auto infos = QSerialPortInfo::availablePorts();
-    for (const QSerialPortInfo &info : infos)
-        ui->comboBox->addItem(info.portName());
+    QObject::connect(this->ui->pushButton_2, &QPushButton::clicked, this, &Info_Dialog::is_port);
+    this->is_port();
     ui->comboBox->setFocus();
     bool t = true;
     ui->start_pushButton->setEnabled(t);
@@ -68,6 +67,7 @@ void Info_Dialog::button(bool t)
     ui->time_interval_lineEdit->setEnabled(t);
     ui->to_values_radioButton->setEnabled(t);
     ui->to_time_radioButton_2->setEnabled(t);
+    ui->pushButton_2->setEnabled(t);
     ui->frame->setEnabled(t);
     if(!ui->start_pushButton->isEnabled())
     {
@@ -115,4 +115,14 @@ int Info_Dialog::is_take()
 void Info_Dialog::on_save_pushButton_clicked()
 {
     item->show();
+}
+
+void Info_Dialog::is_port()
+{
+    const auto infos = QSerialPortInfo::availablePorts();
+    this->ui->comboBox->clear();
+    for (const QSerialPortInfo &info : infos)
+        this->ui->comboBox->addItem(info.portName());
+    if(!(this->ui->comboBox->size().isNull()))
+        this->ui->comboBox->setCurrentIndex(0);
 }

@@ -63,6 +63,7 @@ signals:
     void stop();
 private slots:
     void on_save_pushButton_clicked();
+    void is_port();
 };
 
 #endif // INFO_DIALOG_H

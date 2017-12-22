@@ -99,7 +99,9 @@ void SerialPort::Change_in_time()
             QStringList list2 = list1.at(i).split("\r\n");
 
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
-                break;
+                continue;
+            if(list2.size() < Number_graph)
+                Number_graph = list2.size();
 
             m_mutex.lock();
             x.push_back(x_begin + (i+1) * h);
@@ -123,6 +125,8 @@ void SerialPort::Change_in_time()
 
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
                 break;
+            if(list2.size() < Number_graph)
+                Number_graph = list2.size();
 
             for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
             {
@@ -154,6 +158,8 @@ void SerialPort::Change_in_time()
 
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
                 continue;
+            if(list2.size() < Number_graph)
+                Number_graph = list2.size();
 
             for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
             {
