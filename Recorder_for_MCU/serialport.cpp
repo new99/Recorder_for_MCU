@@ -87,12 +87,17 @@ void SerialPort::Change_in_time()
 
     m_x = ((qreal)my_time.elapsed()) / 1000;
 
+    if(pause_bool)
+    {
+        x_end = ((qreal)my_time.elapsed()) / 1000;
+        return;
+    }
     switch (take_value) {
     case 1:
     {
-        qreal x_begin = 0;
+        x_begin = 0;
         if(x.size() > 0)
-            x_begin = x.last();
+            x_begin = x_end;
         qreal h = (m_x - x_begin) / (list1.size() + 1);
         for(int i = 0; i < list1.size()-1; i++)
         {
@@ -114,7 +119,7 @@ void SerialPort::Change_in_time()
             }
             m_mutex.unlock();
         }
-
+        x_end = x.last();
     }
         break;
     case 2:
@@ -149,7 +154,6 @@ void SerialPort::Change_in_time()
         for(int j = 0; j < Number_graph; j++)
             sum_y[j] = 0;
         int n = 0;
-
 
         for(int i = 0; i < list1.size()-1; i++)
         {
@@ -188,6 +192,7 @@ void SerialPort::Change_in_values()
 {
     QByteArray sig = this->readAll();
     this->str_values += sig;
+
 //    this->str_values = "12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4";
     if(this->str_values.isEmpty())
     {
@@ -202,7 +207,10 @@ void SerialPort::Change_in_values()
 //    this->str_values = "12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4";
     QStringList list1 = this->str_values.split("\r\n\r\n");
     this->str_values = list1.back();
-
+    if(pause_bool)
+    {
+        return;
+    }
     switch (take_value) {
     case 1:
     {
@@ -323,6 +331,18 @@ void SerialPort::clear_numbers()
     m_mutex.unlock();
 }
 
+void SerialPort::pause_timer()
+{
+    if(pause_bool)
+    {
+        pause_bool = false;
+    }
+    else
+    {
+        pause_bool = true;
+    }
+}
+
 void SerialPort::save(QString path)
 {
     QFile *file = new QFile(path);
@@ -354,7 +374,8 @@ void SerialPort::save(QString path)
 void SerialPort::start()
 {
     this->setPortName(PortName);
-    qDebug() << PortName;
+    pause_bool = false;
+//    qDebug() << PortName;
     if(!this->open(QIODevice::ReadOnly))
     {
         qDebug() << this->errorString() << endl;

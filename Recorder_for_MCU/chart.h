@@ -67,6 +67,7 @@ public slots:
     void clear_graph();
     void set_clear_numbers();
     void set_range(bool flag, int i);
+    void pause_timer();
 
 private:
     QTimer m_timer;
@@ -87,6 +88,8 @@ private:
     qreal m_y_min;
     qreal m_y_max;
     void change_range();
+    QStringList Str_Color_Names;
+    bool pause_bool;
 
 signals:
     qreal is_x();

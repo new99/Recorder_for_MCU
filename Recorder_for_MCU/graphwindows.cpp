@@ -44,6 +44,7 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     this->setWindowTitle(tr("Graphs window"));
     window = new Info_Dialog(this);
 
+    this->resize(window->size());
     QToolBar *Tb = new QToolBar(this);
     QPushButton *P_w = new QPushButton(this);
     P_w->setText(tr("Settings"));
@@ -74,10 +75,11 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(port, &SerialPort::is_values_graph, window->ui->to_values_radioButton, &QRadioButton::isChecked);
     QObject::connect(port, &SerialPort::info_connection, window->ui->info_label, &QLabel::setText);
     QObject::connect(port, &SerialPort::is_take, window, &Info_Dialog::is_take);
+    QObject::connect(window->ui->pause_pushButton, &QPushButton::released, port, &SerialPort::pause_timer);
 
     QObject::connect(window->ui->pushButton, &QPushButton::released, window, &Info_Dialog::reject);
     QObject::connect(window->ui->pushButton, &QPushButton::released, this, &GraphWindows::close);
-    QObject::connect(window->ui->up_pushButton, &QPushButton::released, this, &GraphWindows::restart);
+    QObject::connect(window->ui->clear_pushButton, &QPushButton::released, this, &GraphWindows::restart);
 
 }
 
@@ -109,7 +111,6 @@ void GraphWindows::launch()
     }
 
     this->setCentralWidget(centralWidget);
-
     time->start();
     m_timer->start();
 }
@@ -137,7 +138,8 @@ void GraphWindows::new_Chart(QHBoxLayout *mainLayout, int i)
     QObject::connect(port, &SerialPort::boot, chart, &Chart::boot);
     QObject::connect(chart, &Chart::set_values, port, &SerialPort::is_values);
     QObject::connect(chart, &Chart::clear_numbers, port, &SerialPort::clear_numbers);
-    QObject::connect(window->ui->up_pushButton, &QPushButton::released, chart, &Chart::set_clear_numbers);
+    QObject::connect(window->ui->clear_pushButton, &QPushButton::released, chart, &Chart::set_clear_numbers);
+    QObject::connect(window->ui->pause_pushButton, &QPushButton::released, chart, &Chart::pause_timer);
 
     chart->start();
 }

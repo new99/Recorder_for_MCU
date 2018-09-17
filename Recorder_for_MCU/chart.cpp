@@ -40,6 +40,7 @@
 #include <fstream>
 #include <QFile>
 #include <QTextStream>
+#include <QColor>
 
 Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags):
     QChart(QChart::ChartTypeCartesian, parent, wFlags),
@@ -57,9 +58,11 @@ Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags):
     m_x_min(0),
     m_x_max(1e-30),
     m_y_min(0),
-    m_y_max(0)
+    m_y_max(0),
+    pause_bool(true)
 {
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
+    Str_Color_Names << "red" << "green" << "blue" << "black" << "magenta" << "gray" << "darkCyan" << "yellow" << "darkGreen" << "darkMagenta";
 }
 
 Chart::~Chart()
@@ -148,10 +151,12 @@ void Chart::boot(bool t)
 void Chart::start()
 {
     m_timer.setInterval(is_time_interval() * 1000);
+    pause_bool = false;
     m_series = new QLineSeries(this);
-    QPen red(Qt::red);
-    red.setWidth(2);
-    m_series->setPen(red);
+    QPen color_graph(QColor(Str_Color_Names.at(Number)));
+
+    color_graph.setWidth(2);
+    m_series->setPen(color_graph);
     this->addSeries(m_series);
     this->createDefaultAxes();
     this->setAxisX(m_axis, m_series);
@@ -215,6 +220,20 @@ void Chart::set_range(bool flag, int i)
 {
     is_range = flag;
     range = i;
+}
+
+void Chart::pause_timer()
+{
+    if(pause_bool)
+    {
+        m_timer.start();
+        pause_bool = false;
+    }
+    else
+    {
+        m_timer.stop();
+        pause_bool = true;
+    }
 }
 
 void Chart::change_range()

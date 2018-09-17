@@ -66,6 +66,9 @@ private:
     QString str_values;
     QVector<int> n;
     int take_value;
+    bool pause_bool;
+    qreal x_begin;
+    qreal x_end;
 
 public slots:
     void start();
@@ -79,6 +82,7 @@ public slots:
     void Change_in_time();
     void Change_in_values();
     void clear_numbers();
+    void pause_timer();
 
 public:
     SerialPort(QObject *parent = nullptr, QString port = "");
