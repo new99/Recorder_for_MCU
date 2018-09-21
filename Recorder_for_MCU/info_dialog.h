@@ -44,10 +44,10 @@ class Info_Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit Info_Dialog(QWidget *parent = 0);
+    explicit Info_Dialog(QWidget *parent = nullptr);
     ~Info_Dialog();
-    Ui::Info_Dialog *ui;
-    File_Item_Model_Dialog *item;
+    Ui::Info_Dialog *ui = nullptr;
+    File_Item_Model_Dialog *item = nullptr;
 
 public slots:
     void button(bool t);

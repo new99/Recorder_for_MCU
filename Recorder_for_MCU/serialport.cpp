@@ -119,7 +119,10 @@ void SerialPort::Change_in_time()
             }
             m_mutex.unlock();
         }
-        x_end = x.last();
+        if(x.size() != 0)
+        {
+            x_end = x.last();
+        }
     }
         break;
     case 2:
@@ -378,7 +381,7 @@ void SerialPort::start()
 //    qDebug() << PortName;
     if(!this->open(QIODevice::ReadOnly))
     {
-        qDebug() << this->errorString() << endl;
+//        qDebug() << this->errorString() << endl;
         info_connection(this->errorString());
         return;
     }

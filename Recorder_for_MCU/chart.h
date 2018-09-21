@@ -54,7 +54,7 @@ class Chart: public QChart
 {
     Q_OBJECT
 public:
-    Chart(QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0);
+    Chart(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = 0);
     virtual ~Chart();
 
 public slots:
@@ -71,9 +71,9 @@ public slots:
 
 private:
     QTimer m_timer;
-    QLineSeries *m_series;
+    QLineSeries *m_series = nullptr;
     QStringList m_titles;
-    QValueAxis *m_axis;
+    QValueAxis *m_axis = nullptr;
     int Number_graph;
     int Number;
     bool auto_flag;

@@ -51,17 +51,21 @@ class GraphWindows : public QMainWindow
     Q_OBJECT
 private:
     void new_Chart(QHBoxLayout *mainLayout, int i);
-
-public:
-    explicit GraphWindows(QWidget *parent = 0);
-    Info_Dialog *window;
-    SerialPort *port;
-    QLCDNumber *lcd;
-    QTime *time;
-    QTimer *m_timer;
+    Info_Dialog *window = nullptr;
+    SerialPort *port = nullptr;
+    QLCDNumber *lcd = nullptr;
+    QTime *time = nullptr;
+    QTimer *m_timer = nullptr;
     qreal begin_x;
     qreal end_x;
     qreal auto_flag;
+    QWidget *centralWidget = nullptr;
+    QVBoxLayout *mainLayout = nullptr;
+    bool bool_Chart;
+
+public:
+    explicit GraphWindows(QWidget *parent = nullptr);
+    ~GraphWindows();
 
 
 signals:

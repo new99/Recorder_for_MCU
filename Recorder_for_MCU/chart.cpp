@@ -75,7 +75,6 @@ void Chart::handleTimeout()
 {
     if(!set_values())
         return;
-
     QVector<qreal> XY = this->is_XY(Number);
     if((XY.size() < 2) && (XY.size() % 2 != 0))
         return;
@@ -180,7 +179,7 @@ void Chart::clear_graph()
 {
     if(!auto_flag)
         return;
-    if(m_series->count() < 3)
+    if(m_series->count() <= 3)
         return;
 
     bool t1 = ((m_series->at(m_series->count() - 3).x()) - (m_series->at(m_series->count() - 2).x())) > 0;

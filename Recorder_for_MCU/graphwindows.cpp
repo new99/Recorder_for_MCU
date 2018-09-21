@@ -54,8 +54,6 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
 
     m_timer = new QTimer(this);
     time = new QTime;
-    lcd = new QLCDNumber;
-    lcd->setSegmentStyle(QLCDNumber::Flat);
     QObject::connect(m_timer, &QTimer::timeout, this, &GraphWindows::lcd_time);
     QObject::connect(window->ui->stop_pushButton, &QPushButton::released, m_timer, &QTimer::stop);
     m_timer->setInterval(1000);
@@ -81,23 +79,36 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(window->ui->pushButton, &QPushButton::released, this, &GraphWindows::close);
     QObject::connect(window->ui->clear_pushButton, &QPushButton::released, this, &GraphWindows::restart);
 
+    bool_Chart = false;
+}
+
+GraphWindows::~GraphWindows()
+{
+    delete lcd;
+    delete time;
 }
 
 void GraphWindows::launch()
 {
-    QWidget * centralWidget = new QWidget(this);
-    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-    QHBoxLayout *HLayout1 = new QHBoxLayout;
-
-    HLayout1->addWidget(lcd);
+    if(bool_Chart)
+    {
+        delete mainLayout;
+    }
+    centralWidget = new QWidget(this);
+    mainLayout = new QVBoxLayout(centralWidget);
+    QHBoxLayout *HLayout1 = new QHBoxLayout(mainLayout->parentWidget());
     mainLayout->addLayout(HLayout1);
+
+    lcd = new QLCDNumber(mainLayout->parentWidget());
+    lcd->setSegmentStyle(QLCDNumber::Flat);
+    HLayout1->addWidget(lcd);
 
     if(window->ui->to_values_radioButton->isChecked())
         window->ui->number_spinBox->setValue(1);
 
     for(int i = 0; i < (qreal)window->is_number_graph() /(int)(qSqrt(window->is_number_graph())); i++)
     {
-        QHBoxLayout *HLayout = new QHBoxLayout;
+        QHBoxLayout *HLayout = new QHBoxLayout(mainLayout->parentWidget());
         for(int j = 0; j <  (int)qSqrt(window->is_number_graph()); j++)
             if(i * (int)(qSqrt(window->is_number_graph())) + j < window->is_number_graph())
             {
@@ -109,23 +120,24 @@ void GraphWindows::launch()
             }
         mainLayout->addLayout(HLayout);
     }
-
+    bool_Chart = true;
+    this->resize(this->size().width(), this->size().height());
     this->setCentralWidget(centralWidget);
     time->start();
     m_timer->start();
 }
 
-void GraphWindows::new_Chart(QHBoxLayout *mainLayout, int i)
+void GraphWindows::new_Chart(QHBoxLayout *HLayout, int i)
 {
     Chart *chart = new Chart;
     QString str = "MCU f_" + QString::number(i) + "_(t)";
     chart->setTitle(str);
     chart->legend()->hide();
     chart->setAnimationOptions(QChart::AllAnimations);
-    QChartView *chartView = new QChartView;
+    QChartView *chartView = new QChartView(HLayout->parentWidget());
     chartView->setChart(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    mainLayout->addWidget(chartView);
+    HLayout->addWidget(chartView);
 
     chart->setNumber(i);
     chart->set_Auto_flag(window->ui->auto_checkBox->isChecked());
@@ -147,6 +159,7 @@ void GraphWindows::new_Chart(QHBoxLayout *mainLayout, int i)
 
 void GraphWindows::boot(bool t)
 {
+
     if(!t)
         this->launch();
 }

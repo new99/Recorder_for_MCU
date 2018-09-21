@@ -43,7 +43,7 @@ class File_Item_Model_Dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit File_Item_Model_Dialog(QWidget *parent = 0, QString a = "");
+    explicit File_Item_Model_Dialog(QWidget *parent = nullptr, QString a = "");
     ~File_Item_Model_Dialog();
 
     QFileInfo FileInfo;
