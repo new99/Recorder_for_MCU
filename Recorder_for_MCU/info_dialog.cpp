@@ -38,7 +38,6 @@ Info_Dialog::Info_Dialog(QWidget *parent) :
     ui(new Ui::Info_Dialog)
 {
     this->setWindowTitle("settings");
-    item = new File_Item_Model_Dialog(this);
     ui->setupUi(this);
     QObject::connect(this->ui->pushButton_2, &QPushButton::clicked, this, &Info_Dialog::is_port);
     this->is_port();
@@ -111,11 +110,6 @@ int Info_Dialog::is_take()
 }
 
 
-
-void Info_Dialog::on_save_pushButton_clicked()
-{
-    item->show();
-}
 
 void Info_Dialog::is_port()
 {

@@ -43,16 +43,13 @@ INCLUDEPATH += $${IMPORT_PATH}/
 
 HEADERS += chart.h \
     info_dialog.h \
-    file_item_model_dialog.h \
     serialport.h \
     graphwindows.h
 
 SOURCES += main.cpp chart.cpp \
     info_dialog.cpp \
-    file_item_model_dialog.cpp \
     serialport.cpp \
     graphwindows.cpp
 
 FORMS += \
-    info_dialog.ui \
-    file_item_model_dialog.ui
+    info_dialog.ui

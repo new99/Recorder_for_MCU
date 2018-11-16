@@ -30,6 +30,7 @@
 #include "serialport.h"
 #include <QtCore/QDebug>
 #include <QString>
+#include <QFileDialog>
 
 
 SerialPort::SerialPort(QObject *parent, QString port):
@@ -346,8 +347,10 @@ void SerialPort::pause_timer()
     }
 }
 
-void SerialPort::save(QString path)
+void SerialPort::save()
 {
+    QString path = QFileDialog::getSaveFileName(nullptr, tr("Save Data MCU"), "",
+                                                tr("Text (*.txt);; Text (*.out);; All Files (*)"));
     QFile *file = new QFile(path);
     QTextStream out(file);
     if (file->open(QIODevice::WriteOnly))

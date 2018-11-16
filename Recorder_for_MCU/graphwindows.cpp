@@ -29,14 +29,12 @@
 
 #include "graphwindows.h"
 
-#include "file_item_model_dialog.h"
 #include "chart.h"
 #include <QString>
 #include <QtMath>
 #include <QToolBar>
 #include <QLCDNumber>
 #include <QTimer>
-#include <QThread>
 
 
 GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
@@ -68,7 +66,7 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(port, &SerialPort::is_number_graph, window, &Info_Dialog::is_number_graph);
     QObject::connect(window->ui->start_pushButton, &QPushButton::released, port, &SerialPort::start);
     QObject::connect(window->ui->stop_pushButton, &QPushButton::released, port, &SerialPort::stop);
-    QObject::connect(window->item, &File_Item_Model_Dialog::FilePath, port, &SerialPort::save);
+    QObject::connect(window->ui->save_pushButton, &QPushButton::released, port, &SerialPort::save);
     QObject::connect(port, &SerialPort::is_number_graph, window, &Info_Dialog::is_number_graph);
     QObject::connect(port, &SerialPort::is_values_graph, window->ui->to_values_radioButton, &QRadioButton::isChecked);
     QObject::connect(port, &SerialPort::info_connection, window->ui->info_label, &QLabel::setText);
@@ -121,7 +119,7 @@ void GraphWindows::launch()
         mainLayout->addLayout(HLayout);
     }
     bool_Chart = true;
-    this->resize(this->size().width(), this->size().height());
+    this->resize(window->size().width() * 2, window->size().height() * 2);
     this->setCentralWidget(centralWidget);
     time->start();
     m_timer->start();

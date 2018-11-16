@@ -40,7 +40,6 @@
 #include <QMutex>
 #include <QVector>
 #include <QTime>
-#include <QThread>
 
 /****************************************************************************
 ** class SerialPort
@@ -87,7 +86,7 @@ public slots:
 public:
     SerialPort(QObject *parent = nullptr, QString port = "");
     ~SerialPort();
-    void save(QString path);
+    void save();
 
 signals:
     void boot(bool t);

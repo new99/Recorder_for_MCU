@@ -33,7 +33,6 @@
 #include <QDialog>
 #include <QString>
 #include "ui_info_dialog.h"
-#include "file_item_model_dialog.h"
 
 namespace Ui {
 class Info_Dialog;
@@ -47,7 +46,6 @@ public:
     explicit Info_Dialog(QWidget *parent = nullptr);
     ~Info_Dialog();
     Ui::Info_Dialog *ui = nullptr;
-    File_Item_Model_Dialog *item = nullptr;
 
 public slots:
     void button(bool t);
@@ -62,7 +60,6 @@ signals:
     void start();
     void stop();
 private slots:
-    void on_save_pushButton_clicked();
     void is_port();
 };
 
