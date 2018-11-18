@@ -59,7 +59,8 @@ Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags):
     m_x_max(1e-30),
     m_y_min(0),
     m_y_max(0),
-    pause_bool(true)
+    pause_bool(true),
+    m_mutex(QMutex::NonRecursive)
 {
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
     Str_Color_Names << "red" << "green" << "blue" << "black" << "magenta" << "gray" << "darkCyan" << "yellow" << "darkGreen" << "darkMagenta";
@@ -79,6 +80,7 @@ void Chart::handleTimeout()
     if((XY.size() < 2) && (XY.size() % 2 != 0))
         return;
 
+    m_mutex.lock();
     for(int i = 0; i < XY.size() / 2; i++)
     {
         m_x = XY.at(i);
@@ -121,10 +123,12 @@ void Chart::handleTimeout()
         }
 
         m_series->append(m_x, m_y);
+
     }
 
     this->clear_graph();
     this->change_range();
+    m_mutex.unlock();
 }
 
 void Chart::boot(bool t)
@@ -179,7 +183,7 @@ void Chart::clear_graph()
 {
     if(!auto_flag)
         return;
-    if(m_series->count() <= 3)
+    if(m_series->count() < 3)
         return;
 
     bool t1 = ((m_series->at(m_series->count() - 3).x()) - (m_series->at(m_series->count() - 2).x())) > 0;
@@ -196,23 +200,26 @@ void Chart::clear_graph()
 
         m_series->append(x1, y1);
         m_series->append(x2, y2);
+
         this->clear_numbers();
     }
-
 }
 
 void Chart::set_clear_numbers()
 {
-    m_x = 0;
-    m_y = 0;
-    m_x_min = 0;
-    m_x_max  = 0;
+    m_x = 0.0;
+    m_y = 0.0;
+    m_x_min = 0.0;
+    m_x_max  = 1e-16;
     m_y_min = 0;
-    m_y_max = 0;
+    m_y_max = 1e-16;
+    m_mutex.lock();
     this->axisX()->setRange(m_x_min, m_x_max);
     this->axisY()->setRange(m_y_min, m_y_max);
     m_series->clear();
+
     this->clear_numbers();
+    m_mutex.unlock();
 }
 
 void Chart::set_range(bool flag, int i)

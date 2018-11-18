@@ -38,7 +38,8 @@ SerialPort::SerialPort(QObject *parent, QString port):
     PortName(port),
     Number_graph(1),
     values(false),
-    str_values("")
+    str_values(""),
+    m_mutex(QMutex::NonRecursive)
 {
 
 }
@@ -86,11 +87,11 @@ void SerialPort::Change_in_time()
     QStringList list1 = this->str_values.split("\r\n\r\n");
     this->str_values = list1.back();
 
-    m_x = ((qreal)my_time.elapsed()) / 1000;
+    m_x = qreal(my_time.elapsed()) / 1000;
 
     if(pause_bool)
     {
-        x_end = ((qreal)my_time.elapsed()) / 1000;
+        x_end = qreal(my_time.elapsed()) / 1000;
         return;
     }
     switch (take_value) {
@@ -99,7 +100,7 @@ void SerialPort::Change_in_time()
         x_begin = 0;
         if(x.size() > 0)
             x_begin = x_end;
-        qreal h = (m_x - x_begin) / (list1.size() + 1);
+        qreal h = (m_x - x_begin) / (list1.size());
         for(int i = 0; i < list1.size()-1; i++)
         {
             QStringList list2 = list1.at(i).split("\r\n");

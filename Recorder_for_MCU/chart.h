@@ -35,6 +35,7 @@
 #include <QLineSeries>
 #include <QVector>
 #include <QString>
+#include <QMutex>
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QSplineSeries;
@@ -74,6 +75,7 @@ private:
     QLineSeries *m_series = nullptr;
     QStringList m_titles;
     QValueAxis *m_axis = nullptr;
+    QMutex	m_mutex;
     int Number_graph;
     int Number;
     bool auto_flag;
