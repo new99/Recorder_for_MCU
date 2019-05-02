@@ -31,15 +31,17 @@
 #include <QtCore/QDebug>
 #include <QString>
 #include <QFileDialog>
+#include <QDebug>
 
 
 SerialPort::SerialPort(QObject *parent, QString port):
     QSerialPort (parent),
     PortName(port),
+    m_mutex(QMutex::NonRecursive),
     Number_graph(1),
     values(false),
     str_values(""),
-    m_mutex(QMutex::NonRecursive)
+    autosave(false)
 {
 
 }
@@ -71,7 +73,7 @@ void SerialPort::Change_in_time()
 {
     QByteArray sig = this->readAll();
     this->str_values += sig;
-
+//    qDebug() << sig;
 //    this->str_values = "12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n12.0\r\n22.1\r\n33.2\r\n1.4\r\n22.4\r\n\r\n";
     if(this->str_values.isEmpty())
     {
@@ -104,21 +106,28 @@ void SerialPort::Change_in_time()
         for(int i = 0; i < list1.size()-1; i++)
         {
             QStringList list2 = list1.at(i).split("\r\n");
-
+//            qDebug() << list2.size() << Number_graph;
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
                 continue;
-            if(list2.size() < Number_graph)
-                Number_graph = list2.size();
+//            if(list2.size() < Number_graph)
+//                Number_graph = list2.size();
 
             m_mutex.lock();
             x.push_back(x_begin + (i+1) * h);
-            for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
+            for(int j = 0; j <  Number_graph; j++)
             {
-                Number[j] = list2.at(j);
-                if(!Number.at(j).isEmpty())
-                    m_y[j] = Number.at(j).toDouble();
+                if(j < list2.size())
+                {
+                    Number[j] = list2.at(j);
+                    if(!Number.at(j).isEmpty())
+                    {
+                        m_y[j] = Number.at(j).toDouble();
+                    }
+                }
                 y.append(m_y.at(j));
             }
+
+            work_autosave();
             m_mutex.unlock();
         }
         if(x.size() != 0)
@@ -135,8 +144,8 @@ void SerialPort::Change_in_time()
 
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
                 break;
-            if(list2.size() < Number_graph)
-                Number_graph = list2.size();
+//            if(list2.size() < Number_graph)
+//                Number_graph = list2.size();
 
             for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
             {
@@ -149,7 +158,7 @@ void SerialPort::Change_in_time()
         x.push_back(m_x);
         for(int i = 0; i < Number_graph; i++)
             y.append(m_y[i]);
-
+        work_autosave();
         m_mutex.unlock();
     }
         break;
@@ -167,8 +176,8 @@ void SerialPort::Change_in_time()
 
             if((Number_graph > list2.size()) && (m_x < is_time_interval() * 2))
                 continue;
-            if(list2.size() < Number_graph)
-                Number_graph = list2.size();
+//            if(list2.size() < Number_graph)
+//                Number_graph = list2.size();
 
             for(int j = 0; (j <  list2.size()) && (j <  Number_graph); j++)
             {
@@ -185,6 +194,7 @@ void SerialPort::Change_in_time()
             m_y[i] = sum_y[i] / n;
             y.append(m_y[i]);
         }
+        work_autosave();
         m_mutex.unlock();
     }
         break;
@@ -237,12 +247,13 @@ void SerialPort::Change_in_values()
                     y.append(m_y[0]);
                 }
                 else
-                    if((x.back() != m_x) || (y.back() != m_y[0]))
+                    if((!qFuzzyCompare(x.back(), m_x)) || (!qFuzzyCompare(y.back(), m_y[0])))
                     {
                         x.push_back(m_x);
                         y.append(m_y[0]);
                     }
 
+                work_autosave();
                 m_mutex.unlock();
             }
         }
@@ -274,11 +285,12 @@ void SerialPort::Change_in_values()
             y.append(m_y[0]);
         }
         else
-            if((x.back() != m_x) || (y.back() != m_y[0]))
+            if((!qFuzzyCompare(x.back(), m_x)) || (!qFuzzyCompare(y.back(), m_y[0])))
             {
                 x.push_back(m_x);
                 y.append(m_y[0]);
             }
+        work_autosave();
         m_mutex.unlock();
 
 
@@ -314,12 +326,13 @@ void SerialPort::Change_in_values()
                 y.append(m_y[0]);
             }
             else
-                if((x.back() != m_x) || (y.back() != m_y[0]))
+                if((!qFuzzyCompare(x.back(), m_x)) || (!qFuzzyCompare(y.back(), m_y[0])))
                 {
                     x.push_back(m_x);
                     y.append(m_y[0]);
                 }
         }
+        work_autosave();
         m_mutex.unlock();
         break;
     }
@@ -348,11 +361,17 @@ void SerialPort::pause_timer()
     }
 }
 
+void SerialPort::set_autosave(bool i)
+{
+    autosave = i;
+//    qDebug() << autosave;
+}
+
 void SerialPort::save()
 {
     QString path = QFileDialog::getSaveFileName(nullptr, tr("Save Data MCU"), "",
                                                 tr("Text (*.txt);; Text (*.out);; All Files (*)"));
-    QFile *file = new QFile(path);
+    file = new QFile(path);
     QTextStream out(file);
     if (file->open(QIODevice::WriteOnly))
     {
@@ -377,6 +396,53 @@ void SerialPort::save()
     file->close();
 }
 
+void SerialPort::work_autosave()
+{
+    if(!autosave)
+        return;
+    if(x.size() == 0)
+        return;
+    if(y.size() < Number_graph)
+        return;
+
+    QTextStream out(file);
+    out << x.last() << " ";
+    for(int j = 0; j <  Number_graph; j++)
+        out << y.at(y.size() - Number_graph + j) << " ";
+    out << endl;
+}
+
+
+void SerialPort::setting_autosave()
+{
+    if(!autosave)
+        return;
+    QString path = QFileDialog::getSaveFileName(nullptr, tr("Save Data MCU"), "",
+                                                tr("Text (*.txt);; Text (*.out);; All Files (*)"));
+//    if(!path.isEmpty())
+//    {
+//        set_autosave(false);
+//        return;
+//    }
+    file = new QFile(path);
+    QTextStream out(file);
+    if (file->open(QIODevice::WriteOnly))
+    {
+        info_connection(tr("Save"));
+        QTextStream out(file);
+        out << "t ";
+        for(int i = 0; i < Number_graph; i++)
+        {
+            out << "f_" << i << "_(t) ";
+        }
+        out << endl;
+    }
+    else
+    {
+        info_connection(tr("No save"));
+        set_autosave(false);
+    }
+}
 
 void SerialPort::start()
 {
@@ -398,7 +464,10 @@ void SerialPort::start()
     Number.resize(Number_graph);
     m_y.resize(Number_graph);
     for(int i = 0; i < Number_graph; i++)
+    {
+        m_y[i] = 0;
         n.append(0);
+    }
 
     m_timer.setInterval(is_time_interval() * 1000);
 
@@ -413,8 +482,10 @@ void SerialPort::start()
     else
         QObject::connect(&m_timer, &QTimer::timeout, this, &SerialPort::Change_in_time);
 
+    setting_autosave();
     m_timer.start();
     my_time.start();
+//    this->clear();
 }
 
 void SerialPort::stop()
@@ -435,6 +506,9 @@ void SerialPort::stop()
         QObject::disconnect(&m_timer, &QTimer::timeout, this, &SerialPort::Change_in_time);
     m_y.clear();
     Number.clear();
+    if(autosave)
+        if (file->open(QIODevice::WriteOnly))
+            file->close();
 }
 
 qreal SerialPort::is_x()

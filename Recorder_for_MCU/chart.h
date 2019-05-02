@@ -55,7 +55,7 @@ class Chart: public QChart
 {
     Q_OBJECT
 public:
-    Chart(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = 0);
+    Chart(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = nullptr);
     virtual ~Chart();
 
 public slots:

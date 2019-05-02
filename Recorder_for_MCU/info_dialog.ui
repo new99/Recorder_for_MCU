@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>280</width>
-    <height>335</height>
+    <height>366</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,28 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
+     <item row="0" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Port</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="text">
+          <string>Up</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QLabel" name="label_4">
@@ -50,32 +71,41 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
+     <item row="2" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
        <item>
-        <widget class="QPushButton" name="start_pushButton">
+        <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Start</string>
+          <string>Range, sec.</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pause_pushButton">
+        <widget class="QCheckBox" name="range_checkBox">
          <property name="text">
-          <string>Pause</string>
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="stop_pushButton">
-         <property name="text">
-          <string>Stop</string>
+        <widget class="QSpinBox" name="range_spinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>20</number>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="3" column="0">
+     <item row="3" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QLabel" name="label_5">
@@ -115,7 +145,7 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
+     <item row="4" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="label_2">
@@ -125,11 +155,54 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="number_spinBox"/>
+        <widget class="QSpinBox" name="number_spinBox">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
-     <item row="6" column="0">
+     <item row="5" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Time interval, sec.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="time_interval_lineEdit">
+         <property name="text">
+          <string>1</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="6" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QCheckBox" name="save_checkBox">
+         <property name="text">
+          <string>AutoSave</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="save_pushButton">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="7" column="0" colspan="2">
       <widget class="QFrame" name="frame">
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -172,36 +245,33 @@
        </layout>
       </widget>
      </item>
-     <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item row="8" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QPushButton" name="start_pushButton">
          <property name="text">
-          <string>Port</string>
+          <string>Start</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox"/>
+        <widget class="QPushButton" name="pause_pushButton">
+         <property name="text">
+          <string>Pause</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="stop_pushButton">
          <property name="text">
-          <string>Up</string>
+          <string>Stop</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0" colspan="2">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QPushButton" name="save_pushButton">
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QPushButton" name="pushButton">
          <property name="text">
@@ -211,59 +281,7 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Time interval, sec.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="time_interval_lineEdit">
-         <property name="text">
-          <string>1</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Range, sec.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="range_checkBox">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="range_spinBox">
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>20</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="9" column="0">
+     <item row="10" column="0">
       <widget class="QLabel" name="info_label">
        <property name="text">
         <string/>

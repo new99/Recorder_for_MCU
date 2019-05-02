@@ -68,6 +68,7 @@ void Info_Dialog::button(bool t)
     ui->to_time_radioButton_2->setEnabled(t);
     ui->pushButton_2->setEnabled(t);
     ui->frame->setEnabled(t);
+    ui->save_checkBox->setEnabled(t);
     if(!ui->start_pushButton->isEnabled())
     {
         ui->auto_checkBox->setEnabled(t);

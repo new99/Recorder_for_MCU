@@ -44,8 +44,9 @@
 
 Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags):
     QChart(QChart::ChartTypeCartesian, parent, wFlags),
-    m_series(0),
+    m_series(nullptr),
     m_axis(new QValueAxis),
+    m_mutex(QMutex::NonRecursive),
     Number_graph(1),
     Number(0),
     auto_flag(false),
@@ -59,8 +60,7 @@ Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags):
     m_x_max(1e-30),
     m_y_min(0),
     m_y_max(0),
-    pause_bool(true),
-    m_mutex(QMutex::NonRecursive)
+    pause_bool(true)
 {
     QObject::connect(&m_timer, SIGNAL(timeout()), this, SLOT(handleTimeout()));
     Str_Color_Names << "red" << "green" << "blue" << "black" << "magenta" << "gray" << "darkCyan" << "yellow" << "darkGreen" << "darkMagenta";
@@ -77,9 +77,10 @@ void Chart::handleTimeout()
     if(!set_values())
         return;
     QVector<qreal> XY = this->is_XY(Number);
+//    qDebug() << XY.size();
     if((XY.size() < 2) && (XY.size() % 2 != 0))
         return;
-
+    auto yAxis = this->axes(Qt::Vertical).back();
     m_mutex.lock();
     for(int i = 0; i < XY.size() / 2; i++)
     {
@@ -89,9 +90,9 @@ void Chart::handleTimeout()
         if(m_series->count() == 0)
         {
             m_y_max = m_y * 1.01;
-            this->axisY()->setMax(m_y_max);
+            yAxis->setMax(m_y_max);
             m_y_min = m_y * 0.99;
-            this->axisY()->setMin(m_y_min);
+            yAxis->setMin(m_y_min);
             m_x_max = m_x * 1.01;
             m_x_min = m_x * 0.99;
         }
@@ -100,12 +101,12 @@ void Chart::handleTimeout()
             if(m_y > m_y_max)
             {
                 m_y_max = m_y * 1.01;
-                this->axisY()->setMax(m_y_max);
+                yAxis->setMax(m_y_max);
             }
             if(m_y < m_y_min)
             {
                 m_y_min = m_y * 0.99;
-                this->axisY()->setMin(m_y_min);
+                yAxis->setMin(m_y_min);
             }
         }
         else
@@ -113,12 +114,12 @@ void Chart::handleTimeout()
             if(m_y > m_y_max)
             {
                 m_y_max = m_y * 0.99;
-                this->axisY()->setMax(m_y_max);
+                yAxis->setMax(m_y_max);
             }
             if(m_y < m_y_min)
             {
                 m_y_min = m_y * 1.01;
-                this->axisY()->setMin(m_y_min);
+                yAxis->setMin(m_y_min);
             }
         }
 
@@ -162,10 +163,12 @@ void Chart::start()
     m_series->setPen(color_graph);
     this->addSeries(m_series);
     this->createDefaultAxes();
-    this->setAxisX(m_axis, m_series);
+
+    auto xAxis = this->axes(Qt::Horizontal).back();
+    auto yAxis = this->axes(Qt::Vertical).back();
     m_axis->setVisible(false);
-    this->axisX()->setRange(m_x_min, m_x_max);
-    this->axisY()->setRange(m_y_min, m_y_max);
+    xAxis->setRange(m_x_min, m_x_max);
+    yAxis->setRange(m_y_min, m_y_max);
     m_timer.start();
 }
 
@@ -213,9 +216,11 @@ void Chart::set_clear_numbers()
     m_x_max  = 1e-16;
     m_y_min = 0;
     m_y_max = 1e-16;
+    auto xAxis = this->axes(Qt::Horizontal).back();
+    auto yAxis = this->axes(Qt::Vertical).back();
     m_mutex.lock();
-    this->axisX()->setRange(m_x_min, m_x_max);
-    this->axisY()->setRange(m_y_min, m_y_max);
+    xAxis->setRange(m_x_min, m_x_max);
+    yAxis->setRange(m_y_min, m_y_max);
     m_series->clear();
 
     this->clear_numbers();
@@ -261,7 +266,8 @@ void Chart::change_range()
             m_x_min = m_x;
     }
 
-    this->axisX()->setRange(m_x_min, m_x_max);
+    auto xAxis = this->axes(Qt::Horizontal).back();
+    xAxis->setRange(m_x_min, m_x_max);
 }
 
 void Chart::stop()

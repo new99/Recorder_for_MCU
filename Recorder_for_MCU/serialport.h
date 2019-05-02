@@ -68,6 +68,9 @@ private:
     bool pause_bool;
     qreal x_begin;
     qreal x_end;
+    bool autosave;
+    QFile *file;
+    void setting_autosave();
 
 public slots:
     void start();
@@ -82,11 +85,13 @@ public slots:
     void Change_in_values();
     void clear_numbers();
     void pause_timer();
+    void set_autosave(bool i);
 
 public:
     SerialPort(QObject *parent = nullptr, QString port = "");
     ~SerialPort();
     void save();
+    void work_autosave();
 
 signals:
     void boot(bool t);

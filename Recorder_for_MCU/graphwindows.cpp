@@ -103,21 +103,23 @@ void GraphWindows::launch()
 
     if(window->ui->to_values_radioButton->isChecked())
         window->ui->number_spinBox->setValue(1);
+    if(window->is_number_graph() !=0)
+        for(int i = 0; i < qreal(window->is_number_graph()) /int(qSqrt(window->is_number_graph())); i++)
+        {
+            QHBoxLayout *HLayout = new QHBoxLayout(mainLayout->parentWidget());
+            for(int j = 0; j <  int(qSqrt(window->is_number_graph())); j++)
+                if(i * int(qSqrt(window->is_number_graph())) + j < window->is_number_graph())
+                {
+                    this->new_Chart(HLayout, i * int(qSqrt(window->is_number_graph())) + j);
+                }
+                else
+                {
+                    break;
+                }
+            mainLayout->addLayout(HLayout);
+        }
 
-    for(int i = 0; i < (qreal)window->is_number_graph() /(int)(qSqrt(window->is_number_graph())); i++)
-    {
-        QHBoxLayout *HLayout = new QHBoxLayout(mainLayout->parentWidget());
-        for(int j = 0; j <  (int)qSqrt(window->is_number_graph()); j++)
-            if(i * (int)(qSqrt(window->is_number_graph())) + j < window->is_number_graph())
-            {
-                this->new_Chart(HLayout, i *(int)(qSqrt(window->is_number_graph())) + j);
-            }
-            else
-            {
-                break;
-            }
-        mainLayout->addLayout(HLayout);
-    }
+    port->set_autosave(window->ui->save_checkBox->isChecked());
     bool_Chart = true;
     this->resize(window->size().width() * 2, window->size().height() * 2);
     this->setCentralWidget(centralWidget);
@@ -164,9 +166,9 @@ void GraphWindows::boot(bool t)
 
 void GraphWindows::lcd_time()
 {
-    lcd->display(QString::number((int)(time->elapsed() / 60 / 60 / 1000))
-                 + ":" + QString::number((int)(time->elapsed() /1000 / 60) % 60)
-                        + ":" + QString::number((int)(time->elapsed()/ 1000) % 60 ));
+    lcd->display(QString::number(int(time->elapsed() / 60 / 60 / 1000))
+                 + ":" + QString::number(int(time->elapsed() /1000 / 60) % 60)
+                        + ":" + QString::number(int(time->elapsed()/ 1000) % 60 ));
 }
 
 void GraphWindows::restart()
