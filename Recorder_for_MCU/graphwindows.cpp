@@ -35,6 +35,8 @@
 #include <QToolBar>
 #include <QLCDNumber>
 #include <QTimer>
+#include <QSettings>
+#include <QFile>
 
 
 GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
@@ -78,6 +80,38 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(window->ui->clear_pushButton, &QPushButton::released, this, &GraphWindows::restart);
 
     bool_Chart = false;
+
+    if(QFile("settings.conf").exists())
+    {
+        QSettings settings("settings.conf", QSettings::IniFormat);
+        settings.beginGroup("Info_Dialog");
+        if(settings.value("Graph_to_time").toBool())
+            window->ui->to_time_radioButton_2->setChecked(true);
+        if(settings.value("Graph_to_values").toBool())
+            window->ui->to_values_radioButton->setChecked(true);
+        window->ui->range_checkBox->setChecked(settings.value("Range_bool").toBool());
+        window->ui->range_spinBox->setValue(settings.value("Range").toInt());
+        window->ui->auto_checkBox->setChecked(settings.value("auto_clear").toBool());
+        window->ui->number_spinBox->setValue(settings.value("Number_graph").toInt());
+        window->ui->time_interval_lineEdit->setText(settings.value("Time_interval").toString());
+        window->ui->save_checkBox->setChecked(settings.value("Auto_save").toBool());
+        switch (settings.value("Take").toInt())
+        {
+        case 1:
+            window->ui->all_radioButton->setChecked(true);
+            break;
+        case 2:
+            window->ui->last_radioButton->setChecked(true);
+            break;
+        case 3:
+            window->ui->mean_radioButton->setChecked(true);
+            break;
+        }
+        settings.endGroup();
+    }
+
+
+
 }
 
 GraphWindows::~GraphWindows()
@@ -125,6 +159,20 @@ void GraphWindows::launch()
     this->setCentralWidget(centralWidget);
     time->start();
     m_timer->start();
+
+    QSettings settings("settings.conf", QSettings::IniFormat);
+    settings.beginGroup("Info_Dialog");
+    settings.setValue("Graph_to_time", window->ui->to_time_radioButton_2->isChecked());
+    settings.setValue("Graph_to_values", window->ui->to_values_radioButton->isChecked());
+    settings.setValue("Range_bool", window->ui->range_checkBox->isChecked());
+    settings.setValue("Range", window->ui->range_spinBox->value());
+    settings.setValue("auto_clear", window->ui->auto_checkBox->isChecked());
+    settings.setValue("Number_graph", window->is_number_graph());
+    settings.setValue("Time_interval", window->is_time_interval());
+    settings.setValue("Auto_save", window->ui->save_checkBox->isChecked());
+    settings.setValue("Take", window->is_take());
+    settings.endGroup();
+
 }
 
 void GraphWindows::new_Chart(QHBoxLayout *HLayout, int i)
