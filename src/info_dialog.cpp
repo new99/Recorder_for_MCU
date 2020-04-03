@@ -121,3 +121,4 @@ void Info_Dialog::is_port()
     if(!(this->ui->comboBox->size().isNull()))
         this->ui->comboBox->setCurrentIndex(0);
 }
+

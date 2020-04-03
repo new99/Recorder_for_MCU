@@ -27,59 +27,33 @@
 **
 ****************************************************************************/
 
-#ifndef GRAPHWINDOWs_H
-#define GRAPHWINDOWs_H
+#ifndef CHARTVIEW_H
+#define CHARTVIEW_H
 
-#include <QMainWindow>
 #include <QtCharts/QChartView>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QComboBox>
-#include <QThread>
-#include <QVector>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include "serialport.h"
-#include "info_dialog.h"
-#include "chart.h"
-#include <QLCDNumber>
-#include <QTime>
-#include <QTimer>
+#include <QtWidgets/QRubberBand>
 
-class GraphWindows : public QMainWindow
+QT_CHARTS_USE_NAMESPACE
+
+//![1]
+class ChartView : public QChartView
+//![1]
 {
-    Q_OBJECT
-private:
-    void new_Chart(QHBoxLayout *HLayout, int i);
-    void new_Chart(QHBoxLayout *HLayout, int i, QVector<qreal> x, QVector<qreal> y);
-    Info_Dialog *window = nullptr;
-    SerialPort *port = nullptr;
-    QLCDNumber *lcd = nullptr;
-    QTime *time = nullptr;
-    QTimer *m_timer = nullptr;
-    qreal begin_x;
-    qreal end_x;
-    qreal auto_flag;
-    QWidget *centralWidget = nullptr;
-    QVBoxLayout *mainLayout = nullptr;
-    bool bool_Chart;
-    QWidget *parentChart = nullptr;
-
-
 public:
-    explicit GraphWindows(QWidget *parent = nullptr);
-    ~GraphWindows();
+    ChartView(QChart *chart, QWidget *parent = 0);
 
+//![2]
+protected:
+    bool viewportEvent(QEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+//![2]
 
-signals:
-    int is_number_graph();
-
-public slots:
-    void launch();
-    void boot(bool t);
-    void lcd_time();
-    void restart();
-    void read_file();
+private:
+    bool m_isTouching;
+    QPointF m_lastMousePos;
 };
 
-#endif // GRAPHWINDOWs_H
+#endif

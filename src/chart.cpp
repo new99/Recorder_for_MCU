@@ -247,6 +247,36 @@ void Chart::pause_timer()
     }
 }
 
+void Chart::gragh_chart(QVector<qreal> x, QVector<qreal> y)
+{
+    m_series = new QLineSeries(this);
+    QPen color_graph(QColor(Str_Color_Names.at(Number)));
+    color_graph.setWidth(2);
+    m_series->setPen(color_graph);
+    this->addSeries(m_series);
+    this->createDefaultAxes();
+
+
+    m_axis->setVisible(false);
+
+    for(int i = 0; i < x.size(); i++)
+    {
+        m_series->append(x.at(i), y.at(i));
+    }
+    this->auto_range(x, y);
+
+}
+
+void Chart::auto_range(QVector<qreal> x, QVector<qreal> y)
+{
+    qSort(x.begin(), x.end());
+    qSort(y.begin(), y.end());
+    auto xAxis = this->axes(Qt::Horizontal).back();
+    auto yAxis = this->axes(Qt::Vertical).back();
+    xAxis->setRange(x.first(), x.last());
+    yAxis->setRange(y.first(), y.last());
+}
+
 void Chart::change_range()
 {
     if(is_range)

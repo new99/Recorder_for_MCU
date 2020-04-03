@@ -28,8 +28,10 @@
 ****************************************************************************/
 
 #include "graphwindows.h"
+#include "graphwindows.h"
 
 #include "chart.h"
+#include "chartview.h"
 #include <QString>
 #include <QtMath>
 #include <QToolBar>
@@ -37,6 +39,8 @@
 #include <QTimer>
 #include <QSettings>
 #include <QFile>
+#include <QFileDialog>
+#include <QDebug>
 
 
 GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
@@ -74,6 +78,7 @@ GraphWindows::GraphWindows(QWidget *parent) : QMainWindow(parent)
     QObject::connect(port, &SerialPort::info_connection, window->ui->info_label, &QLabel::setText);
     QObject::connect(port, &SerialPort::is_take, window, &Info_Dialog::is_take);
     QObject::connect(window->ui->pause_pushButton, &QPushButton::released, port, &SerialPort::pause_timer);
+    QObject::connect(window->ui->Read_pushButton, &QPushButton::released, this, &GraphWindows::read_file);
 
     QObject::connect(window->ui->pushButton, &QPushButton::released, window, &Info_Dialog::reject);
     QObject::connect(window->ui->pushButton, &QPushButton::released, this, &GraphWindows::close);
@@ -124,9 +129,10 @@ void GraphWindows::launch()
 {
     if(bool_Chart)
     {
-        delete mainLayout;
+        delete parentChart;
     }
-    centralWidget = new QWidget(this);
+    parentChart = new QWidget(this);
+    centralWidget = new QWidget(parentChart);
     mainLayout = new QVBoxLayout(centralWidget);
     QHBoxLayout *HLayout1 = new QHBoxLayout(mainLayout->parentWidget());
     mainLayout->addLayout(HLayout1);
@@ -177,13 +183,13 @@ void GraphWindows::launch()
 
 void GraphWindows::new_Chart(QHBoxLayout *HLayout, int i)
 {
-    Chart *chart = new Chart;
+    Chart *chart = new Chart();
+    chart->setParent(HLayout->parent());
     QString str = "MCU f_" + QString::number(i) + "_(t)";
     chart->setTitle(str);
     chart->legend()->hide();
     chart->setAnimationOptions(QChart::AllAnimations);
-    QChartView *chartView = new QChartView(HLayout->parentWidget());
-    chartView->setChart(chart);
+    ChartView *chartView = new ChartView(chart, HLayout->parentWidget());
     chartView->setRenderHint(QPainter::Antialiasing);
     HLayout->addWidget(chartView);
 
@@ -203,6 +209,91 @@ void GraphWindows::new_Chart(QHBoxLayout *HLayout, int i)
 
     chart->start();
 }
+
+void GraphWindows::new_Chart(QHBoxLayout *HLayout, int i, QVector<qreal> x, QVector<qreal> y)
+{
+    qDebug() << x.last() << y.last();
+    Chart *chart = new Chart();
+    chart->setParent(HLayout->parent());
+    QString str = "MCU f_" + QString::number(i) + "_(t)";
+    chart->setTitle(str);
+    chart->legend()->hide();
+    chart->setAnimationOptions(QChart::AllAnimations);
+    ChartView *chartView = new ChartView(chart, HLayout->parentWidget());
+    chartView->setRenderHint(QPainter::Antialiasing);
+    HLayout->addWidget(chartView);
+
+    chart->setNumber(i);
+    chart->gragh_chart(x, y);
+    chart->show();
+
+}
+
+void GraphWindows::read_file()
+{
+
+    QString path = QFileDialog::getOpenFileName(nullptr, tr("Read Data MCU"), "",
+                                                tr("Text (*.txt);; Text (*.out);; All Files (*)"));
+    QFile *file = new QFile(path);
+    QTextStream in(file);
+    int num = 0;
+    QVector<qreal> x;
+    QVector<QVector<qreal>> y;
+    if (file->open(QIODevice::ReadOnly))
+    {
+        if(!file->atEnd())
+        {
+            QString str = file->readLine();
+            QStringList list1 = str.split(" ");
+            num = list1.size()-2;
+            y.resize(num);
+            while(!file->atEnd())
+            {
+                QString str = file->readLine();
+                QStringList list1 = str.split(" ");
+                x.append(list1.at(0).toDouble());
+                for(int i = 0; i < num; i++)
+                {
+                    y[i].append(list1.at(i+1).toDouble());
+                }
+            }
+        }
+        if(bool_Chart)
+        {
+            delete parentChart;
+        }
+        parentChart = new QWidget(this);
+        centralWidget = new QWidget(parentChart);
+        mainLayout = new QVBoxLayout(centralWidget);
+        QHBoxLayout *HLayout1 = new QHBoxLayout(mainLayout->parentWidget());
+        mainLayout->addLayout(HLayout1);
+        if(num > 0)
+            for(int i = 0; i < qreal(num) / int(qSqrt(num)); i++)
+            {
+                QHBoxLayout *HLayout = new QHBoxLayout(mainLayout->parentWidget());
+                for(int j = 0; j <  int(qSqrt(num)); j++)
+                    if(i * int(qSqrt(window->is_number_graph())) + j < num)
+                    {
+                        qDebug() << i * int(qSqrt(num)) + j;
+
+                        this->new_Chart(HLayout, i * int(qSqrt(num)) + j, x, y.at(i * int(qSqrt(num)) + j));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                mainLayout->addLayout(HLayout);
+            }
+        this->resize(window->size().width() * 2, window->size().height() * 2);
+        this->setCentralWidget(centralWidget);
+
+        window->ui->info_label->setText(tr("Read"));
+    }
+    else
+        window->ui->info_label->setText(tr("No read"));
+    file->close();
+}
+
 
 
 void GraphWindows::boot(bool t)

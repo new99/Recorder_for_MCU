@@ -36,6 +36,7 @@
 #include <QVector>
 #include <QString>
 #include <QMutex>
+#include <QPointF>
 
 QT_CHARTS_BEGIN_NAMESPACE
 class QSplineSeries;
@@ -69,6 +70,8 @@ public slots:
     void set_clear_numbers();
     void set_range(bool flag, int i);
     void pause_timer();
+    void gragh_chart(QVector<qreal> x, QVector<qreal> y);
+    void auto_range(QVector<qreal> x, QVector<qreal> y);
 
 private:
     QTimer m_timer;

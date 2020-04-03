@@ -383,9 +383,9 @@ void SerialPort::save()
         out << endl;
         for(int i = 0; i < x.size(); i++)
         {
-            out << x.at(i) << " ";
+            out << x.at(i);
             for(int j = i * Number_graph; j <  (i + 1) * Number_graph; j++)
-                out << y.at(j) << " ";
+                out << " " << y.at(j);
             out << endl;
         }
         info_connection(tr("Saved"));
@@ -395,6 +395,8 @@ void SerialPort::save()
 
     file->close();
 }
+
+
 
 void SerialPort::work_autosave()
 {

@@ -5,7 +5,7 @@ TEMPLATE = app
 
 TARGET = Recorder_for_MCU
 
-VERSION = 1.5.0
+VERSION = 1.6.0
 
 QMAKE_TARGET_COPYRIGHT = (c) Ryabov Evgeniy
 
@@ -42,11 +42,13 @@ INCLUDEPATH += $${INC_PATH}/
 INCLUDEPATH += $${IMPORT_PATH}/
 
 HEADERS += chart.h \
+    chartview.h \
     info_dialog.h \
     serialport.h \
     graphwindows.h
 
 SOURCES += main.cpp chart.cpp \
+    chartview.cpp \
     info_dialog.cpp \
     serialport.cpp \
     graphwindows.cpp
